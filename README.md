@@ -1,3 +1,5 @@
+[![Actions Status](https://github.com/lizmat/paths/workflows/test/badge.svg)](https://github.com/lizmat/paths/actions)
+
 NAME
 ====
 
@@ -48,6 +50,8 @@ AUTHOR
 ======
 
 Elizabeth Mattijsen <liz@raku.rocks>
+
+Source can be located at: https://github.com/lizmat/paths . Comments and Pull Requests are welcome.
 
 COPYRIGHT AND LICENSE
 =====================

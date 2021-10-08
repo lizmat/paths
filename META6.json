@@ -16,8 +16,9 @@
   },
   "resources": [
   ],
-  "source-url": "",
+  "source-url": "https://github.com/lizmat/paths.git",
   "tags": [
+    "PATH"
   ],
   "test-depends": [
   ],

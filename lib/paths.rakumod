@@ -191,6 +191,9 @@ investigated as well.
 
 Elizabeth Mattijsen <liz@raku.rocks>
 
+Source can be located at: https://github.com/lizmat/paths . Comments and
+Pull Requests are welcome.
+
 =head1 COPYRIGHT AND LICENSE
 
 Copyright 2021 Elizabeth Mattijsen
