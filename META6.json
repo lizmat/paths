@@ -1,0 +1,25 @@
+{
+  "auth": "cpan:ELIZABETH",
+  "authors": [
+    "Elizabeth Mattijsen"
+  ],
+  "build-depends": [
+  ],
+  "depends": [
+  ],
+  "description": "a fast recursive file finder",
+  "license": "Artistic-2.0",
+  "name": "paths",
+  "perl": "6.d",
+  "provides": {
+    "paths": "lib/paths.rakumod"
+  },
+  "resources": [
+  ],
+  "source-url": "",
+  "tags": [
+  ],
+  "test-depends": [
+  ],
+  "version": "6.c"
+}
