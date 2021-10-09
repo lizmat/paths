@@ -2,6 +2,10 @@ Revision history for paths
 
 {{$NEXT}}
 
+10.0.0  2021-10-09T12:51:42+02:00
+    - Needed to switch to a higher version as App::Mi6 once again decided
+      to upload as a "v6.c" version
+
 0.0.2  2021-10-09T12:39:02+02:00
     - Add more tests from a temporary directory
     - First released version after App::Mi6 snafu fixed

@@ -2,7 +2,7 @@
 use nqp;
 
 my
-class paths:ver<0.0.2>:auth<zef:lizmat> does Iterator {
+class paths:ver<10.0.0>:auth<zef:lizmat> does Iterator {
     has str $!prefix;         # currently active prefix for entries
     has str $!dir-sep;        # directory separator to use
     has $!dir-matcher;        # matcher for accepting dir names
