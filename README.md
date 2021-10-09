@@ -32,7 +32,7 @@ ARGUMENTS
 
   * directory
 
-The only positional argument is optional: it can either be a path as a string or as an `IO` object. It defaults to the current directory.
+The only positional argument is optional: it can either be a path as a string or as an `IO` object. It defaults to the current directory. Thei (implicitely) specified directory will **always** be investigated, even if the directory name does not match the `:dir` argument.
 
   * :dir
 

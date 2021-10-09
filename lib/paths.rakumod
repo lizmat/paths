@@ -1,9 +1,8 @@
 # This is a naughty module, inspired by Rakudo::Internal.DIR-RECURSE
 use nqp;
 
-my # we don't want to export the class, App::Mi6 needs this on a separate line
-class paths:ver<0.0.1>:auth<zef:lizmat> does Iterator {
-    has str $!abspath;        # currently active abspath (prefix for entries)
+my class paths:ver<0.0.2>:auth<zef:lizmat> does Iterator {
+    has str $!prefix;         # currently active prefix for entries
     has str $!dir-sep;        # directory separator to use
     has $!dir-matcher;        # matcher for accepting dir names
     has $!file-matcher;       # matcher for accepting file names
@@ -19,10 +18,10 @@ class paths:ver<0.0.1>:auth<zef:lizmat> does Iterator {
         $!recurse      := $recurse;
         $!dir-sep       = $*SPEC.dir-sep;
 
-        $!handle := nqp::null;
-        $!seen   := nqp::hash;
-        nqp::push_s(($!todo := nqp::list_s),$abspath);
-        $!abspath = nqp::concat($abspath,$!dir-sep);
+        $!seen := nqp::hash;
+        $!todo := nqp::list_s;
+        $!handle := nqp::opendir($abspath);
+        $!prefix  = nqp::concat($abspath,$!dir-sep);
         $!dir-accepts-files := True;
 
         self
@@ -74,7 +73,7 @@ class paths:ver<0.0.1>:auth<zef:lizmat> does Iterator {
                         nqp::add_i(nqp::rindex($abspath,$!dir-sep),1)
                       )
                     )),
-                    ($!abspath = nqp::concat($abspath,$!dir-sep))
+                    ($!prefix = nqp::concat($abspath,$!dir-sep))
                   )
                 )
               ),
@@ -90,7 +89,7 @@ class paths:ver<0.0.1>:auth<zef:lizmat> does Iterator {
           nqp::chars(my str $entry = self!next),
           nqp::if(
             nqp::stat(
-              (my str $path = nqp::concat($!abspath,$entry)),
+              (my str $path = nqp::concat($!prefix,$entry)),
               nqp::const::STAT_EXISTS
             ),
             nqp::if(
@@ -104,7 +103,7 @@ class paths:ver<0.0.1>:auth<zef:lizmat> does Iterator {
                   nqp::if(
                     nqp::fileislink($path),
                     $path = IO::Path.new(
-                      $path,:CWD($!abspath)).resolve.absolute
+                      $path,:CWD($!prefix)).resolve.absolute
                   ),
                   nqp::if(
                     nqp::not_i(nqp::existskey($!seen,$path))
@@ -167,7 +166,9 @@ exception of C<.> and C<..>).
 =item directory
 
 The only positional argument is optional: it can either be a path as a string
-or as an C<IO> object.  It defaults to the current directory.
+or as an C<IO> object.  It defaults to the current directory.  Thei
+(implicitely) specified directory will B<always> be investigated, even if the
+directory name does not match the C<:dir> argument.
 
 =item :dir
 

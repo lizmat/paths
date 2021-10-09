@@ -1,36 +1,82 @@
 use Test;
 use paths;
 
-plan 2;
+plan 12;
 
-my $dir  = $*PROGRAM.parent.parent;
-my $root = $dir.absolute;
+(my $dir    := $*SPEC.tmpdir.add("paths.test")).mkdir;
+(my $foo    := $dir.add("foo")).mkdir;
+(my $one    := $foo.add("one.json")).spurt("one.json");
+(my $foobar := $foo.add("bar")).mkdir;
+(my $two   := $foobar.add("two.json")).spurt("two.json");
+(my $three := $foobar.add("three.txt")).spurt("three.txt");
+(my $foobardot := $foobar.add(".dot")).mkdir;
+(my $four := $foobardot.add("four.t")).spurt("four.t");
+(my $five := $foobardot.add("five.t")).spurt("five.t");
+
+LEAVE {
+    .unlink for $five, $four, $three, $two, $one;
+    .rmdir  for $foobardot, $foobar, $foo;
+}
+
+my $root = $dir.absolute.subst('\\' ,'/', :global);
 my $from = $root.chars + 1;
-my @paths;
+my @got;
 
 sub verify-path-roots($plan, |c) is test-assertion {
     my @seen;
     subtest 'test path roots', {
         plan $plan;
-        for paths($dir) -> $path {
+        for paths(|c).map(*.subst: '\\', '/', :global) -> $path {
             ok $path.starts-with($root), "root of $path.IO.basename() ok";
             @seen.push($path.substr($from));
         }
     }
-    @paths := @seen.sort.List;
+    @got := @seen.sort.List;
 }
 
-verify-path-roots(9, $dir);
-is-deeply @paths, <
-  .gitignore
-  Changes
-  LICENSE
-  META6.json
-  README.md
-  dist.ini
-  lib/paths.rakumod
-  run-tests
-  t/01-basic.rakutest
->, "did we get all the paths for $dir";
+sub verify-files(@expected, $comment) is test-assertion {
+    subtest $comment => {
+        plan 1 + @expected;
+        is-deeply @got, @expected, 'are all files accounted for';
+        for @expected {
+            my $io := $dir.add($_);
+            is $io.slurp, $io.basename, "is the content '$io.basename()'";
+        }
+    }
+}
+
+verify-path-roots 3, $dir;
+verify-files <
+  foo/bar/three.txt
+  foo/bar/two.json
+  foo/one.json
+>, 'did we get all the paths for $dir';
+
+verify-path-roots 5, $dir, :dir;
+verify-files <
+  foo/bar/.dot/five.t
+  foo/bar/.dot/four.t
+  foo/bar/three.txt
+  foo/bar/two.json
+  foo/one.json
+>, 'did we get all the paths for $dir :dir';
+
+verify-path-roots 2, $dir, :file(*.ends-with('.json'));
+verify-files <
+  foo/bar/two.json
+  foo/one.json
+>, 'did we get all the paths for $dir :file(*.ends-with(json))';
+
+verify-path-roots 0, $dir, :file(*.ends-with('.t'));
+is +@got, 0, 'did we get no paths for $dir :file(*.ends-with(t))';
+
+verify-path-roots 0, $dir, :dir(* eq '.dot');
+is +@got, 0, 'did we get no paths for $dir :dir(* eq .dot)';
+
+verify-path-roots 2, $dir, :dir(* eq '.dot'), :recurse;
+verify-files <
+  foo/bar/.dot/five.t
+  foo/bar/.dot/four.t
+>, 'did we get all the paths for $dir :dir(* eq .dot) :recurse';
 
 # vim: expandtab shiftwidth=4
