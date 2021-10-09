@@ -1,6 +1,8 @@
 Revision history for paths
 
 {{$NEXT}}
+
+0.0.2  2021-10-09T12:39:02+02:00
     - Add more tests from a temporary directory
     - First released version after App::Mi6 snafu fixed
 
