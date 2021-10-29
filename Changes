@@ -2,6 +2,11 @@ Revision history for paths
 
 {{$NEXT}}
 
+10.0.2  2021-10-29T20:52:55+02:00
+    - Marking the iterator as "lazy" was **not** a good idea.  It stops
+      you from just doing .elems if you just want to know the number of
+      paths found.
+
 10.0.1  2021-10-29T15:53:36+02:00
     - Make sure iterator is marked as lazy and non-deterministic (as the
       OS may decide to change the order and/or the file system contents
