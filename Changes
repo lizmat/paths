@@ -2,6 +2,11 @@ Revision history for paths
 
 {{$NEXT}}
 
+10.0.1  2021-10-29T15:53:36+02:00
+    - Make sure iterator is marked as lazy and non-deterministic (as the
+      OS may decide to change the order and/or the file system contents
+      may change).
+
 10.0.0  2021-10-09T12:51:42+02:00
     - Needed to switch to a higher version as App::Mi6 once again decided
       to upload as a "v6.c" version
