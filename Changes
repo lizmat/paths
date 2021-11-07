@@ -2,6 +2,9 @@ Revision history for paths
 
 {{$NEXT}}
 
+10.0.3  2021-11-07T12:02:29+01:00
+    - Remove the class definition needed for mi6
+
 10.0.2  2021-10-29T20:52:55+02:00
     - Marking the iterator as "lazy" was **not** a good idea.  It stops
       you from just doing .elems if you just want to know the number of
