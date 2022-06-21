@@ -5,6 +5,8 @@ Revision history for paths
 10.0.4  2022-06-21T12:09:46+02:00
     - Make defaults also active when undefined values have been specified
       to ease integration into CLI's
+    - Add sponsor link
+    - Update copyright year
 
 10.0.3  2021-11-07T12:02:29+01:00
     - Remove the class definition needed for mi6
