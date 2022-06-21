@@ -1,7 +1,7 @@
 use Test;
 use paths;
 
-plan 12;
+plan 14;
 
 (my $dir    := $*SPEC.tmpdir.add("paths.test")).mkdir;
 (my $foo    := $dir.add("foo")).mkdir;
@@ -46,6 +46,13 @@ sub verify-files(@expected, $comment) is test-assertion {
 }
 
 verify-path-roots 3, $dir;
+verify-files <
+  foo/bar/three.txt
+  foo/bar/two.json
+  foo/one.json
+>, 'did we get all the paths for $dir';
+
+verify-path-roots 3, $dir, :dir(Any), :file(Any);
 verify-files <
   foo/bar/three.txt
   foo/bar/two.json

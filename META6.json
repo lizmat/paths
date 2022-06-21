@@ -18,9 +18,11 @@
   ],
   "source-url": "https://github.com/lizmat/paths.git",
   "tags": [
-    "PATH"
+    "PATH",
+    "RECURSE",
+    "FINDER"
   ],
   "test-depends": [
   ],
-  "version": "10.0.3"
+  "version": "10.0.4"
 }

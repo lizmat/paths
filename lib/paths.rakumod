@@ -1,4 +1,4 @@
-# This is a naughty module, inspired by Rakudo::Internal.DIR-RECURSE
+# This is a naughty module, inspired by Rakudo::Internals.DIR-RECURSE
 use nqp;
 
 my class Paths does Iterator {
@@ -124,13 +124,13 @@ my class Paths does Iterator {
     method is-deterministic(--> False) { }
 }
 
-my sub paths(
-  $abspath  = ".",
-  Mu :$dir  = -> str $elem { nqp::not_i(nqp::eqat($elem,'.',0)) },
-  Mu :$file = True,
-     :$recurse,
-) is export {
-    Seq.new: Paths.new($abspath.IO.absolute, $dir, $file, $recurse)
+my sub paths($abspath?, Mu :$dir, Mu :$file, :$recurse) is export {
+    Seq.new:
+      Paths.new:
+        ($abspath // "/.").IO.absolute,
+        $dir  // -> str $elem { nqp::not_i(nqp::eqat($elem,'.',0)) },
+        $file // True,
+        $recurse
 }
 
 =begin pod
@@ -168,27 +168,30 @@ exception of C<.> and C<..>).
 =item directory
 
 The only positional argument is optional: it can either be a path as a string
-or as an C<IO> object.  It defaults to the current directory.  Thei
-(implicitely) specified directory will B<always> be investigated, even if the
-directory name does not match the C<:dir> argument.
+or as an C<IO> object.  It defaults to the current directory (also when an
+undefined value is specified.  The (implicitely) specified directory will
+B<always> be investigated, even if the directory name does not match the
+C<:dir> argument.
 
 =item :dir
 
 The named argument C<:dir> accepts a matcher to be used in smart-matching
 with the basename of the directories being found.  It defaults to skipping
-all of the directories that start with a period.
+all of the directories that start with a period (also if an undefined value
+is specified).
 
 =item :file
 
 The named argument C<:file> accepts a matcher to be used in smart-matching
 with the basename of the file being found.  It defaults to C<True>, meaning
-that all possible files will be produced.
+that all possible files will be produced (also if an undefined values is
+specified).
 
 =item :recurse
 
 The named argument C<:recurse> accepts a boolean value to indicate whether
 subdirectories that did B<not> match the C<:dir> specification, should be
-investigated as well.
+investigated as well.  By default, it will not.
 
 =head1 AUTHOR
 
@@ -197,9 +200,13 @@ Elizabeth Mattijsen <liz@raku.rocks>
 Source can be located at: https://github.com/lizmat/paths . Comments and
 Pull Requests are welcome.
 
+If you like this module, or what I’m doing more generally, committing to a
+L<small sponsorship|https://github.com/sponsors/lizmat/>  would mean a great
+deal to me!
+
 =head1 COPYRIGHT AND LICENSE
 
-Copyright 2021 Elizabeth Mattijsen
+Copyright 2021, 2022 Elizabeth Mattijsen
 
 This library is free software; you can redistribute it and/or modify it under the Artistic License 2.0.
 
