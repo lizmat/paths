@@ -1,7 +1,7 @@
 use Test;
 use paths;
 
-plan 14;
+plan 16;
 
 (my $dir    := $*SPEC.tmpdir.add("paths.test")).mkdir;
 (my $foo    := $dir.add("foo")).mkdir;
@@ -85,5 +85,8 @@ verify-files <
   foo/bar/.dot/five.t
   foo/bar/.dot/four.t
 >, 'did we get all the paths for $dir :dir(* eq .dot) :recurse';
+
+verify-path-roots 1, $three;
+verify-files ('foo/bar/three.txt',), 'did we get the single existing file';
 
 # vim: expandtab shiftwidth=4

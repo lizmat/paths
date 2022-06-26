@@ -2,6 +2,10 @@ Revision history for paths
 
 {{$NEXT}}
 
+10.0.5  2022-06-26T14:32:20+02:00
+    - If the given path is not a directory, but it exists and is matched
+      by the file-matcher, then produce only that path
+
 10.0.4  2022-06-21T12:09:46+02:00
     - Make defaults also active when undefined values have been specified
       to ease integration into CLI's

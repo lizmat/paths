@@ -34,6 +34,8 @@ ARGUMENTS
 
 The only positional argument is optional: it can either be a path as a string or as an `IO` object. It defaults to the current directory (also when an undefined value is specified. The (implicitely) specified directory will **always** be investigated, even if the directory name does not match the `:dir` argument.
 
+If the specified path exists, but is not a directory, then only that path will be produced if the file-matcher accepts the path. In all other cases, an empty `Seq` will be returned.
+
   * :dir
 
 The named argument `:dir` accepts a matcher to be used in smart-matching with the basename of the directories being found. It defaults to skipping all of the directories that start with a period (also if an undefined value is specified).

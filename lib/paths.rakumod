@@ -28,10 +28,13 @@ my class Paths does Iterator {
     }
     method new(str $abspath, $dir-matcher, $file-matcher, $recurse) {
         nqp::stat($abspath,nqp::const::STAT_EXISTS)
-          && nqp::stat($abspath,nqp::const::STAT_ISDIR)
-          ?? nqp::create(self)!SET-SELF(
-               $abspath, $dir-matcher, $file-matcher, $recurse
-             )
+          ?? nqp::stat($abspath,nqp::const::STAT_ISDIR)
+            ?? nqp::create(self)!SET-SELF(
+                 $abspath, $dir-matcher, $file-matcher, $recurse
+               )
+            !! $file-matcher.ACCEPTS($abspath)
+              ?? Rakudo::Iterator.OneValue($abspath)
+              !! Rakudo::Iterator.Empty
           !! Rakudo::Iterator.Empty
     }
 
@@ -172,6 +175,10 @@ or as an C<IO> object.  It defaults to the current directory (also when an
 undefined value is specified.  The (implicitely) specified directory will
 B<always> be investigated, even if the directory name does not match the
 C<:dir> argument.
+
+If the specified path exists, but is not a directory, then only that path
+will be produced if the file-matcher accepts the path.  In all other cases,
+an empty C<Seq> will be returned.
 
 =item :dir
 
