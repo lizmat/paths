@@ -7,6 +7,7 @@ use paths;
 (my $symfoo := $dir.add("symfoo")).unlink;
 
 LEAVE {
+    $symfoo.unlink;
     .rmdir for $foo, $dir, $tmpdir;
 }
 
