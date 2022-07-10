@@ -20,6 +20,8 @@ use paths;
 .say for paths(:file(*.ends-with(".json");  # all .json files
 
 .say for paths(:recurse);                   # also recurse in non-accepted dirs
+
+.say for paths(:follow-symlinks);           # also recurse into symlinked dirs
 ```
 
 DESCRIPTION
@@ -47,6 +49,10 @@ The named argument `:file` accepts a matcher to be used in smart-matching with t
   * :recurse
 
 The named argument `:recurse` accepts a boolean value to indicate whether subdirectories that did **not** match the `:dir` specification, should be investigated as well. By default, it will not.
+
+  * :follow-symlinks
+
+The named argument `:follow-symlinks` accepts a boolean value to indicate whether subdirectories, that are actually symbolic links to a directory, should be investigated as well. By default, it will not.
 
 AUTHOR
 ======

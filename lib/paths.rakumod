@@ -7,16 +7,20 @@ my class Paths does Iterator {
     has $!dir-matcher;        # matcher for accepting dir names
     has $!file-matcher;       # matcher for accepting file names
     has $!recurse;            # recurse on non-matching dirs?
+    has $!follow-symlinks;    # whether to follow symlinks
     has $!handle;             # currently active nqp::opendir() handle
     has $!todo;               # list of abspaths of dirs to do still
     has $!seen;               # has of abspaths of dirs seen already
     has $!dir-accepts-files;  # produce files in current dir if accepted
 
-    method !SET-SELF(str $abspath, $dir-matcher, $file-matcher, $recurse) {
-        $!dir-matcher  := $dir-matcher;
-        $!file-matcher := $file-matcher;
-        $!recurse      := $recurse;
-        $!dir-sep       = $*SPEC.dir-sep;
+    method !SET-SELF(
+      str $abspath, $dir-matcher, $file-matcher, $recurse, $follow-symlinks
+    ) {
+        $!dir-matcher     := $dir-matcher;
+        $!file-matcher    := $file-matcher;
+        $!recurse         := $recurse;
+        $!follow-symlinks := $follow-symlinks;
+        $!dir-sep          = $*SPEC.dir-sep;
 
         $!seen := nqp::hash;
         $!todo := nqp::list_s;
@@ -26,11 +30,14 @@ my class Paths does Iterator {
 
         self
     }
-    method new(str $abspath, $dir-matcher, $file-matcher, $recurse) {
+    method new(
+      str $abspath, $dir-matcher, $file-matcher, $recurse, $follow-symlinks
+    ) {
         nqp::stat($abspath,nqp::const::STAT_EXISTS)
           ?? nqp::stat($abspath,nqp::const::STAT_ISDIR)
             ?? nqp::create(self)!SET-SELF(
-                 $abspath, $dir-matcher, $file-matcher, $recurse
+                 $abspath, $dir-matcher, $file-matcher,
+                 $recurse, $follow-symlinks
                )
             !! $file-matcher.ACCEPTS($abspath)
               ?? Rakudo::Iterator.OneValue($abspath)
@@ -101,19 +108,22 @@ my class Paths does Iterator {
                 && $!file-matcher.ACCEPTS($entry),
               (return $path),
               nqp::if(
-                nqp::stat($path,nqp::const::STAT_ISDIR),
-                nqp::stmts(
-                  nqp::if(
-                    nqp::fileislink($path),
-                    $path = IO::Path.new(
-                      $path,:CWD($!prefix)).resolve.absolute
-                  ),
-                  nqp::if(
-                    nqp::not_i(nqp::existskey($!seen,$path))
-                      && ($!recurse || $!dir-accepts-files),
-                    nqp::stmts(
-                      nqp::bindkey($!seen,$path,1),
-                      nqp::push_s($!todo,$path)
+                $!follow-symlinks || nqp::not_i(nqp::fileislink($path)),
+                nqp::if(
+                  nqp::stat($path,nqp::const::STAT_ISDIR),
+                  nqp::stmts(
+                    nqp::if(
+                      nqp::fileislink($path),
+                      $path = IO::Path.new(
+                        $path,:CWD($!prefix)).resolve.absolute
+                    ),
+                    nqp::if(
+                      nqp::not_i(nqp::existskey($!seen,$path))
+                        && ($!recurse || $!dir-accepts-files),
+                      nqp::stmts(
+                        nqp::bindkey($!seen,$path,1),
+                        nqp::push_s($!todo,$path)
+                      )
                     )
                   )
                 )
@@ -127,13 +137,20 @@ my class Paths does Iterator {
     method is-deterministic(--> False) { }
 }
 
-my sub paths($abspath?, Mu :$dir, Mu :$file, :$recurse) is export {
+my sub paths(
+      $abspath?,
+  Mu :$dir,
+  Mu :$file,
+     :$recurse,
+     :$follow-symlinks,
+--> Seq:D) is export {
     Seq.new:
       Paths.new:
         ($abspath // "/.").IO.absolute,
         $dir  // -> str $elem { nqp::not_i(nqp::eqat($elem,'.',0)) },
         $file // True,
-        $recurse
+        $recurse,
+        $follow-symlinks
 }
 
 =begin pod
@@ -157,6 +174,8 @@ use paths;
 .say for paths(:file(*.ends-with(".json");  # all .json files
 
 .say for paths(:recurse);                   # also recurse in non-accepted dirs
+
+.say for paths(:follow-symlinks);           # also recurse into symlinked dirs
 
 =end code
 
@@ -199,6 +218,12 @@ specified).
 The named argument C<:recurse> accepts a boolean value to indicate whether
 subdirectories that did B<not> match the C<:dir> specification, should be
 investigated as well.  By default, it will not.
+
+=item :follow-symlinks
+
+The named argument C<:follow-symlinks> accepts a boolean value to indicate
+whether subdirectories, that are actually symbolic links to a directory,
+should be investigated as well.  By default, it will not.
 
 =head1 AUTHOR
 
