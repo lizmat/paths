@@ -10,7 +10,7 @@ LEAVE {
     .rmdir for $foo, $dir, $tmpdir;
 }
 
-if $foo.symlink($symfoo) {
+if $foo.symlink($symfoo) && $symfoo.e {
     plan 16;
 
     (my $one    := $foo.add("one.json")).spurt("one.json");
