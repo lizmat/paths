@@ -22,15 +22,24 @@ use paths;
 .say for paths(:recurse);                   # also recurse in non-accepted dirs
 
 .say for paths(:follow-symlinks);           # also recurse into symlinked dirs
+
+say is-regular-file('/etc/passwed');        # True (on Unixes)
 ```
 
 DESCRIPTION
 ===========
 
-Exports a subroutine `paths` that creates a `Seq` of absolute path strings of files for the given directory and all its sub-directories (with the notable exception of `.` and `..`).
+Exports two subroutines: `paths` (returning a `Seq` of absolute path strings of files for the given directory and all its sub-directories (with the notable exception of `.` and `..`). And `is-regular-file`, which returns a `Bool` indicating whether the given absolute path is a regular file.
 
-ARGUMENTS
-=========
+EXPORTED SUBROUTINES
+====================
+
+paths
+-----
+
+The `paths` subroutine returns a `Seq` of absolute path strings of files for the given directory and all its sub-directories (with the notable exception of `.` and `..`).
+
+### ARGUMENTS
 
   * directory
 
@@ -53,6 +62,15 @@ The named argument `:recurse` accepts a boolean value to indicate whether subdir
   * :follow-symlinks
 
 The named argument `:follow-symlinks` accepts a boolean value to indicate whether subdirectories, that are actually symbolic links to a directory, should be investigated as well. By default, it will not.
+
+is-regular-file
+---------------
+
+```raku
+say is-regular-file('/etc/passwed');  # True (on Unixes)
+```
+
+Returns a `Bool` indicating whether the given absolute path is a regular file.
 
 AUTHOR
 ======

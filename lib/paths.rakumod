@@ -137,6 +137,13 @@ my class Paths does Iterator {
     method is-deterministic(--> False) { }
 }
 
+my sub is-regular-file(str $path) is export {
+    nqp::hllbool(
+      nqp::stat($path,nqp::const::STAT_EXISTS)
+        && nqp::stat($path,nqp::const::STAT_ISREG)
+    )
+}
+
 my sub paths(
       $abspath?,
   Mu :$dir,
@@ -177,15 +184,26 @@ use paths;
 
 .say for paths(:follow-symlinks);           # also recurse into symlinked dirs
 
+say is-regular-file('/etc/passwed');        # True (on Unixes)
+
 =end code
 
 =head1 DESCRIPTION
 
-Exports a subroutine C<paths> that creates a C<Seq> of absolute path strings
+Exports two subroutines: C<paths> (returning a C<Seq> of absolute path strings
 of files for the given directory and all its sub-directories (with the notable
+exception of C<.> and C<..>).  And C<is-regular-file>, which returns a C<Bool>
+indicating whether the given absolute path is a regular file.
+
+=head1 EXPORTED SUBROUTINES
+
+=head2 paths
+
+The C<paths> subroutine returns a C<Seq> of absolute path strings of files
+for the given directory and all its sub-directories (with the notable
 exception of C<.> and C<..>).
 
-=head1 ARGUMENTS
+=head3 ARGUMENTS
 
 =item directory
 
@@ -224,6 +242,17 @@ investigated as well.  By default, it will not.
 The named argument C<:follow-symlinks> accepts a boolean value to indicate
 whether subdirectories, that are actually symbolic links to a directory,
 should be investigated as well.  By default, it will not.
+
+=head2 is-regular-file
+
+=begin code :lang<raku>
+
+say is-regular-file('/etc/passwed');  # True (on Unixes)
+
+=end code
+
+Returns a C<Bool> indicating whether the given absolute path is a regular
+file.
 
 =head1 AUTHOR
 

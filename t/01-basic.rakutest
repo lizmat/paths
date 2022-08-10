@@ -1,7 +1,7 @@
 use Test;
 use paths;
 
-plan 16;
+plan 18;
 
 (my $dir    := $*SPEC.tmpdir.add("paths.test")).mkdir;
 (my $foo    := $dir.add("foo")).mkdir;
@@ -88,5 +88,8 @@ verify-files <
 
 verify-path-roots 1, $three;
 verify-files ('foo/bar/three.txt',), 'did we get the single existing file';
+
+ok is-regular-file($*PROGRAM.absolute),          'is this a regular file';
+nok is-regular-file($*PROGRAM.parent.absolute), 'is parent not a regular file';
 
 # vim: expandtab shiftwidth=4

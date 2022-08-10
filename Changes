@@ -2,6 +2,9 @@ Revision history for paths
 
 {{$NEXT}}
 
+10.0.7  2022-08-10T16:17:40+02:00
+    - Also export "is-regular-file" helper subroutine
+
 10.0.6  2022-07-10T15:14:51+02:00
     - Do not follow symlinked directories by default anymore.
     - Add :follow-symlinks argument to follow symlinked directories
