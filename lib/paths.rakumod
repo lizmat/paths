@@ -220,9 +220,11 @@ an empty C<Seq> will be returned.
 =item :dir
 
 The named argument C<:dir> accepts a matcher to be used in smart-matching
-with the basename of the directories being found.  It defaults to skipping
-all of the directories that start with a period (also if an undefined value
-is specified).
+with the basename of the directories being found.  If accepted, will
+produce both files as well as other directories to recurse into.
+
+It defaults to skipping all of the directories that start with a period
+(also if an undefined value is specified).
 
 =item :file
 
@@ -233,9 +235,13 @@ specified).
 
 =item :recurse
 
-The named argument C<:recurse> accepts a boolean value to indicate whether
-subdirectories that did B<not> match the C<:dir> specification, should be
-investigated as well.  By default, it will not.
+Flag.  The named argument C<:recurse> accepts a boolean value to indicate
+whether subdirectories that did B<not> match the C<:dir> specification,
+should be investigated as well for other B<directories> to recurse into.
+No files will be produced from a directory that didn't match the C<:dir>
+argument.
+
+By default, it will not recurse into directories.
 
 =item :follow-symlinks
 
