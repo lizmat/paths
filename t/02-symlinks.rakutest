@@ -1,7 +1,7 @@
 use Test;
 use paths;
 
-(my $tmpdir := $*SPEC.tmpdir.resolve.add("paths.test")).mkdir;
+(my $tmpdir := $*SPEC.tmpdir.resolve.add("paths.test-" ~ rand)).mkdir;
 (my $dir    := $tmpdir.add("dir")).mkdir;
 (my $foo    := $tmpdir.add("foo")).mkdir;
 (my $symfoo := $dir.add("symfoo")).unlink;

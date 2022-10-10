@@ -3,7 +3,7 @@ use paths;
 
 plan 18;
 
-(my $dir    := $*SPEC.tmpdir.add("paths.test")).mkdir;
+(my $dir    := $*SPEC.tmpdir.add("paths.test-" ~ rand)).mkdir;
 (my $foo    := $dir.add("foo")).mkdir;
 (my $one    := $foo.add("one.json")).spurt("one.json");
 (my $foobar := $foo.add("bar")).mkdir;
