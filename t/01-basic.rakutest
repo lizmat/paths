@@ -1,7 +1,7 @@
 use Test;
 use paths;
 
-plan 18;
+plan 28;
 
 (my $dir    := $*SPEC.tmpdir.add("paths.test-" ~ rand)).mkdir;
 (my $foo    := $dir.add("foo")).mkdir;
@@ -52,12 +52,24 @@ verify-files <
   foo/one.json
 >, 'did we get all the paths for $dir';
 
+verify-path-roots 2, $dir, :!file;
+is-deeply @got, <
+  foo
+  foo/bar
+>, 'did we get all the directories for $dir';
+
 verify-path-roots 3, $dir, :dir(Any), :file(Any);
 verify-files <
   foo/bar/three.txt
   foo/bar/two.json
   foo/one.json
->, 'did we get all the paths for $dir';
+>, 'did we get all the paths for Any / Any';
+
+verify-path-roots 2, $dir, :dir(Any), :!file;
+is-deeply @got, <
+  foo
+  foo/bar
+>, 'did we get all the directories for Any';
 
 verify-path-roots 5, $dir, :dir;
 verify-files <
@@ -67,6 +79,13 @@ verify-files <
   foo/bar/two.json
   foo/one.json
 >, 'did we get all the paths for $dir :dir';
+
+verify-path-roots 3, $dir, :dir, :!file;
+is-deeply @got, <
+  foo
+  foo/bar
+  foo/bar/.dot
+>, 'did we get all the directories for $dir :dir';
 
 verify-path-roots 2, $dir, :file(*.ends-with('.json'));
 verify-files <
@@ -80,11 +99,18 @@ is +@got, 0, 'did we get no paths for $dir :file(*.ends-with(t))';
 verify-path-roots 0, $dir, :dir(* eq '.dot');
 is +@got, 0, 'did we get no paths for $dir :dir(* eq .dot)';
 
+verify-path-roots 0, $dir, :dir(* eq '.dot'), :!file;
+is +@got, 0, 'did we get no directories for $dir :dir(* eq .dot)';
+
 verify-path-roots 2, $dir, :dir(* eq '.dot'), :recurse;
 verify-files <
   foo/bar/.dot/five.t
   foo/bar/.dot/four.t
 >, 'did we get all the paths for $dir :dir(* eq .dot) :recurse';
+
+verify-path-roots 1, $dir, :dir(* eq '.dot'), :recurse, :!file;
+is-deeply @got, ('foo/bar/.dot',),
+  'did we get all the directories for $dir :dir(* eq .dot) :recurse';
 
 verify-path-roots 1, $three;
 verify-files ('foo/bar/three.txt',), 'did we get the single existing file';

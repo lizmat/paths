@@ -3,7 +3,7 @@
 NAME
 ====
 
-paths - a fast recursive file finder
+paths - A fast recursive file / directory finder
 
 SYNOPSIS
 ========
@@ -23,13 +23,34 @@ use paths;
 
 .say for paths(:follow-symlinks);           # also recurse into symlinked dirs
 
+.say for paths(:!file);                     # only produce directory paths
+
 say is-regular-file('/etc/passwed');        # True (on Unixes)
 ```
 
 DESCRIPTION
 ===========
 
-Exports two subroutines: `paths` (returning a `Seq` of absolute path strings of files for the given directory and all its sub-directories (with the notable exception of `.` and `..`). And `is-regular-file`, which returns a `Bool` indicating whether the given absolute path is a regular file.
+By default exports two subroutines: `paths` (returning a `Seq` of absolute path strings of files (or directories) for the given directory and all its sub-directories (with the notable exception of `.` and `..`).
+
+And `is-regular-file`, which returns a `Bool` indicating whether the given absolute path is a regular file.
+
+SELECTIVE IMPORTING
+===================
+
+```raku
+use paths <paths>;  # only export sub paths
+```
+
+By default all utility functions are exported. But you can limit this to the functions you actually need by specifying the names in the `use` statement.
+
+To prevent name collisions and/or import any subroutine with a more memorable name, one can use the "original-name:known-as" syntax. A semi-colon in a specified string indicates the name by which the subroutine is known in this distribution, followed by the name with which it will be known in the lexical context in which the `use` command is executed.
+
+```raku
+use path <paths:find-all-paths>;  # export "path-exists" as "alive"
+
+.say for find-all-paths;
+```
 
 EXPORTED SUBROUTINES
 ====================
@@ -56,6 +77,8 @@ It defaults to skipping all of the directories that start with a period (also if
   * :file
 
 The named argument `:file` accepts a matcher to be used in smart-matching with the basename of the file being found. It defaults to `True`, meaning that all possible files will be produced (also if an undefined values is specified).
+
+If the boolean value `False` is specified, then **only** the paths of directories will be produced.
 
   * :recurse
 

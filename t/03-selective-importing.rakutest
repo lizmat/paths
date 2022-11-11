@@ -1,0 +1,27 @@
+use Test;
+
+my constant @subs = <paths is-regular-file>;
+
+plan @subs + 2;
+
+my $code;
+for @subs {
+    $code ~= qq:!c:to/CODE/;
+    {
+        use paths '$_';
+        ok MY::<&$_>:exists, "Did '$_' get exported?";
+    }
+    CODE
+}
+
+$code ~= qq:!c:to/CODE/;
+{
+    use paths <paths:find-all-paths>;
+    ok MY::<&find-all-paths>:exists, "Did 'alive' get exported?";
+    is MY::<&find-all-paths>.name, 'paths', 'Was the original name ok?';
+}
+CODE
+
+$code.EVAL;
+
+# vim: expandtab shiftwidth=4
