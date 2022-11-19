@@ -7,6 +7,7 @@ my class Files does Iterator {
     has $!dir-matcher;        # matcher for accepting dir names
     has $!file-matcher;       # matcher for accepting file names
     has $!recurse;            # recurse on non-matching dirs?
+    has $!readable-files;     # only produce readable files
     has $!follow-symlinks;    # whether to follow symlinks
     has $!handle;             # currently active nqp::opendir() handle
     has $!todo;               # list of abspaths of dirs to do still
@@ -14,30 +15,39 @@ my class Files does Iterator {
     has $!dir-accepts-files;  # produce files in current dir if accepted
 
     method !SET-SELF(
-      str $abspath, $dir-matcher, $file-matcher, $recurse, $follow-symlinks
+      str $abspath, $dir-matcher, $file-matcher,
+      $recurse, $follow-symlinks, $readable-files
     ) {
+
+        # Set up first dir, return empty handed if failed
+        nqp::handle(
+          ($!handle := nqp::opendir($abspath)),
+          'CATCH', (return Rakudo::Iterator.Empty)
+        );
+
         $!dir-matcher     := $dir-matcher;
         $!file-matcher    := $file-matcher;
         $!recurse         := $recurse;
         $!follow-symlinks := $follow-symlinks;
+        $!readable-files  := $readable-files;
         $!dir-sep          = $*SPEC.dir-sep;
 
-        $!seen := nqp::hash;
-        $!todo := nqp::list_s;
-        $!handle := nqp::opendir($abspath);
-        $!prefix  = nqp::concat($abspath,$!dir-sep);
+        $!seen  := nqp::hash;
+        $!todo  := nqp::list_s;
+        $!prefix = nqp::concat($abspath,$!dir-sep);
         $!dir-accepts-files := True;
 
         self
     }
     method new(
-      str $abspath, $dir-matcher, $file-matcher, $recurse, $follow-symlinks
+      str $abspath, $dir-matcher, $file-matcher,
+      $recurse, $follow-symlinks, $readable-files
     ) {
         nqp::stat($abspath,nqp::const::STAT_EXISTS)
           ?? nqp::stat($abspath,nqp::const::STAT_ISDIR)
             ?? nqp::create(self)!SET-SELF(
                  $abspath, $dir-matcher, $file-matcher,
-                 $recurse, $follow-symlinks
+                 $recurse, $follow-symlinks, $readable-files
                )
             !! $file-matcher.ACCEPTS($abspath)
               ?? Rakudo::Iterator.OneValue($abspath)
@@ -104,6 +114,7 @@ my class Files does Iterator {
             ),
             nqp::if(
               nqp::stat($path,nqp::const::STAT_ISREG)
+                && nqp::iseq_i($!readable-files,nqp::filereadable($path))
                 && $!dir-accepts-files
                 && $!file-matcher.ACCEPTS($entry),
               (return $path),
@@ -150,15 +161,21 @@ my class Directories does Iterator {
     method !SET-SELF(
       str $abspath, $dir-matcher, $recurse, $follow-symlinks
     ) {
+
+        # Set up first dir, return empty handed if failed
+        nqp::handle(
+          ($!handle := nqp::opendir($abspath)),
+          'CATCH', (return Rakudo::Iterator.Empty)
+        ),
+
         $!dir-matcher     := $dir-matcher;
         $!recurse         := $recurse.Bool;
         $!follow-symlinks := $follow-symlinks;
         $!dir-sep          = $*SPEC.dir-sep;
 
-        $!seen := nqp::hash;
-        $!todo := nqp::list_s;
-        $!handle := nqp::opendir($abspath);
-        $!prefix  = nqp::concat($abspath,$!dir-sep);
+        $!seen  := nqp::hash;
+        $!todo  := nqp::list_s;
+        $!prefix = nqp::concat($abspath,$!dir-sep);
 
         self
     }
@@ -264,11 +281,12 @@ my sub is-regular-file(str $path) is export {
 }
 
 my sub paths(
-      $abspath? is copy,
-  Mu :$dir      is copy,
-  Mu :$file,
-     :$recurse,
-     :$follow-symlinks,
+          $abspath? is copy,
+      Mu :$dir      is copy,
+      Mu :$file,
+         :$recurse,
+         :$follow-symlinks,
+  Bool:D :$readable-files = True,
 --> Seq:D) is export {
 
     $abspath = ($abspath // "./").IO.absolute;
@@ -276,7 +294,8 @@ my sub paths(
 
     Seq.new: $file<> =:= False
       ?? Directories.new: $abspath, $dir, $recurse, $follow-symlinks
-      !! Files.new: $abspath, $dir, $file // True, $recurse, $follow-symlinks
+      !! Files.new: $abspath, $dir, $file // True,
+                    $recurse, $follow-symlinks, $readable-files.Int
 }
 
 my sub EXPORT(*@names) {
