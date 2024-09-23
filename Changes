@@ -1,6 +1,8 @@
 Revision history for paths
 
 {{$NEXT}}
+
+10.1  2024-09-23T15:07:59+02:00
     - Add sponsor button
     - Show CI badge for each OS
     - Update copyright year
