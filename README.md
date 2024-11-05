@@ -47,7 +47,7 @@ By default all utility functions are exported. But you can limit this to the fun
 To prevent name collisions and/or import any subroutine with a more memorable name, one can use the "original-name:known-as" syntax. A semi-colon in a specified string indicates the name by which the subroutine is known in this distribution, followed by the name with which it will be known in the lexical context in which the `use` command is executed.
 
 ```raku
-use path <paths:find-all-paths>;  # export "path-exists" as "alive"
+use path <paths:find-all-paths>;  # export "paths" as "find-all-paths"
 
 .say for find-all-paths;
 ```
@@ -64,7 +64,7 @@ The `paths` subroutine returns a `Seq` of absolute path strings of files for the
 
   * directory
 
-The only positional argument is optional: it can either be a path as a string or as an `IO` object. It defaults to the current directory (also when an undefined value is specified. The (implicitely) specified directory will **always** be investigated, even if the directory name does not match the `:dir` argument.
+The only positional argument is optional: it can either be a path as a string or as an `IO` object. It defaults to the current directory (also when an undefined value is specified). The (implicitely) specified directory will **always** be investigated, even if the directory name does not match the `:dir` argument.
 
 If the specified path exists, but is not a directory, then only that path will be produced if the file-matcher accepts the path. In all other cases, an empty `Seq` will be returned.
 
