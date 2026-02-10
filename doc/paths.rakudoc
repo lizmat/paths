@@ -7,7 +7,6 @@ paths - A fast recursive file / directory finder
 =head1 SYNOPSIS
 
 =begin code :lang<raku>
-
 use paths;
 
 .say for paths;                             # all files from current directory
@@ -25,7 +24,6 @@ use paths;
 .say for paths(:!file);                     # only produce directory paths
 
 say is-regular-file('/etc/passwed');        # True (on Unixes)
-
 =end code
 
 =head1 DESCRIPTION
@@ -40,9 +38,7 @@ absolute path is a regular file.
 =head1 SELECTIVE IMPORTING
 
 =begin code :lang<raku>
-
 use paths <paths>;  # only export sub paths
-
 =end code
 
 By default all utility functions are exported.  But you can limit this to
@@ -56,11 +52,9 @@ is known in this distribution, followed by the name with which it will be
 known in the lexical context in which the C<use> command is executed.
 
 =begin code :lang<raku>
-
 use path <paths:find-all-paths>;  # export "paths" as "find-all-paths"
 
 .say for find-all-paths;
-
 =end code
 
 =head1 EXPORTED SUBROUTINES
@@ -123,9 +117,7 @@ should be investigated as well.  By default, it will not.
 =head2 is-regular-file
 
 =begin code :lang<raku>
-
 say is-regular-file('/etc/passwed');  # True (on Unixes)
-
 =end code
 
 Returns a C<Bool> indicating whether the given absolute path is a regular
@@ -144,7 +136,7 @@ deal to me!
 
 =head1 COPYRIGHT AND LICENSE
 
-Copyright 2021, 2022, 2024 Elizabeth Mattijsen
+Copyright 2021, 2022, 2024, 2026 Elizabeth Mattijsen
 
 This library is free software; you can redistribute it and/or modify it under the Artistic License 2.0.
 

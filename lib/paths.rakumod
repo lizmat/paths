@@ -25,17 +25,17 @@ my class Files does Iterator {
           'CATCH', (return Rakudo::Iterator.Empty)
         );
 
-        $!dir-matcher     := $dir-matcher;
-        $!file-matcher    := $file-matcher;
-        $!recurse         := $recurse;
-        $!follow-symlinks := $follow-symlinks;
-        $!readable-files  := $readable-files;
+        $!dir-matcher     := $dir-matcher;  # UNCOVERABLE
+        $!file-matcher    := $file-matcher;  # UNCOVERABLE
+        $!recurse         := $recurse;  # UNCOVERABLE
+        $!follow-symlinks := $follow-symlinks;  # UNCOVERABLE
+        $!readable-files  := $readable-files;  # UNCOVERABLE
         $!dir-sep          = $*SPEC.dir-sep;
 
-        $!seen  := nqp::hash;
-        $!todo  := nqp::list_s;
-        $!prefix = nqp::concat($abspath,$!dir-sep);
-        $!dir-accepts-files := True;
+        $!seen  := nqp::hash;  # UNCOVERABLE
+        $!todo  := nqp::list_s;  # UNCOVERABLE
+        $!prefix = nqp::concat($abspath,$!dir-sep);  # UNCOVERABLE
+        $!dir-accepts-files := True;  # UNCOVERABLE
 
         self
     }
@@ -145,7 +145,7 @@ my class Files does Iterator {
         IterationEnd
     }
 
-    method is-deterministic(--> False) { }
+    method is-deterministic(--> False) { }  # UNCOVERABLE
 }
 
 my class Directories does Iterator {
@@ -170,12 +170,12 @@ my class Directories does Iterator {
 
         $!dir-matcher     := $dir-matcher;
         $!recurse         := $recurse.Bool;
-        $!follow-symlinks := $follow-symlinks;
+        $!follow-symlinks := $follow-symlinks;  # UNCOVERABLE
         $!dir-sep          = $*SPEC.dir-sep;
 
-        $!seen  := nqp::hash;
-        $!todo  := nqp::list_s;
-        $!prefix = nqp::concat($abspath,$!dir-sep);
+        $!seen  := nqp::hash;  # UNCOVERABLE
+        $!todo  := nqp::list_s;  # UNCOVERABLE
+        $!prefix = nqp::concat($abspath,$!dir-sep);  # UNCOVERABLE
 
         self
     }
@@ -270,7 +270,7 @@ my class Directories does Iterator {
         IterationEnd
     }
 
-    method is-deterministic(--> False) { }
+    method is-deterministic(--> False) { }  # UNCOVERABLE
 }
 
 my sub is-regular-file(str $path) is export {
