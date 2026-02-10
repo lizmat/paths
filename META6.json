@@ -10,13 +10,18 @@
   "description": "A fast recursive file / directory finder",
   "license": "Artistic-2.0",
   "name": "paths",
-  "perl": "6.d",
   "provides": {
     "paths": "lib/paths.rakumod"
   },
+  "raku": "6.d",
   "resources": [
   ],
   "source-url": "https://github.com/lizmat/paths.git",
+  "support": {
+    "bugtracker": "https://github.com/lizmat/paths/issues",
+    "email": "liz@raku.rocks",
+    "source": "https://github.com/lizmat/paths.git"
+  },
   "tags": [
     "PATH",
     "RECURSE",
@@ -24,5 +29,5 @@
   ],
   "test-depends": [
   ],
-  "version": "10.1"
+  "version": "10.2"
 }

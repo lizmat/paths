@@ -1,6 +1,9 @@
 Revision history for paths
 
 {{$NEXT}}
+
+10.2  2026-02-10T11:37:19+01:00
+    - Modernize META6.json
     - 100% coverage testing
     - Update copyright year
 
