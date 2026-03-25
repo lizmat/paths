@@ -23,7 +23,7 @@ use paths;
 
 .say for paths(:!file);                     # only produce directory paths
 
-say is-regular-file('/etc/passwed');        # True (on Unixes)
+say is-regular-file('/etc/passwd');        # True (on Unixes)
 =end code
 
 =head1 DESCRIPTION
@@ -117,7 +117,7 @@ should be investigated as well.  By default, it will not.
 =head2 is-regular-file
 
 =begin code :lang<raku>
-say is-regular-file('/etc/passwed');  # True (on Unixes)
+say is-regular-file('/etc/passwd');  # True (on Unixes)
 =end code
 
 Returns a C<Bool> indicating whether the given absolute path is a regular
