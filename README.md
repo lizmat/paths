@@ -25,7 +25,7 @@ use paths;
 
 .say for paths(:!file);                     # only produce directory paths
 
-say is-regular-file('/etc/passwed');        # True (on Unixes)
+say is-regular-file('/etc/passwd');        # True (on Unixes)
 ```
 
 DESCRIPTION
@@ -94,7 +94,7 @@ is-regular-file
 ---------------
 
 ```raku
-say is-regular-file('/etc/passwed');  # True (on Unixes)
+say is-regular-file('/etc/passwd');  # True (on Unixes)
 ```
 
 Returns a `Bool` indicating whether the given absolute path is a regular file.
